@@ -1,37 +1,40 @@
 function [w] = newtonLog(x, t, f, thresh)
-	sig = inline('1/(1+exp(-x))');
+	sig = inline('1.0./(1.0+exp(-x))');
 
 	[M, N] = size(x);
 
 	R = zeros(N, N);
 
-	w0 = zeros(M, 1);
-	w = w0;
+	w = zeros(M, 1);
 
 	y = zeros(N, 1);
 
 	diff = Inf;
 
-	X = zeros(N, M);
-
-	for i = 1:N
-		for j=1:M
-			X(i,j) = f(x'(i,j));
-		end
-	end
+	X = x';
+	
+	J_p = 0;
+	J = J_p;
 
 	while diff > thresh
-		w0 = w;
-		for i=1:N
-			y(i,:) = sig(w' * X(i, :)');
-			R(i, i) = y(i, :) * (1 - y(i,:));
-		end
-	
-		z = X * w0 - pinv(R) * (y - t);
-		w = inv(X'*R*X - 10.*eye(M))*X'*R*z;
-	
-		diff = norm(w - w0);
+		J_p = J;
+		y = X * w;
+		y = sig(y);
 
-		diff
+		grad = X' * (y-t);
+		H = X' * diag(y) * diag(1-y) * X;
+		
+		w = w - H\grad;
+
+		%R = diag(y) * diag(1-y);
+	
+		%z = X * w - pinv(R) * (y - t);
+		%w = pinv(X'*R*X)*X'*R*z;
+
+		J = sum(-t.*log(y) - (1-t).*log(1-y));	
+	
+		diff = J - J_p;
 	end
+
+	J
 end	

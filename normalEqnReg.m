@@ -3,6 +3,6 @@ function [theta] = normalEqnReg(x, y, M, f, fi)
 	
 	id = fi .* eye(length(x));	
 
-        theta = inv(m'*m - id)*m'*y;
+        theta = inv(m'*m + id)*m'*y;
 end
 
