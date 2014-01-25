@@ -14,8 +14,7 @@ function [w] = newtonLog(x, t, f, thresh)
 
 	X = f(x');
 	
-	J_p = 0;
-	J = J_p;
+	J = 0;
 
 	while diff > thresh
 		w0 = w;
@@ -32,6 +31,8 @@ function [w] = newtonLog(x, t, f, thresh)
 	
 		z = X * w - pinv(R) * (y - t);
 		w = pinv(X'*R*X + 10.*eye(M))*X'*R*z;
+
+		J =sum(-t.*log(y) - (1-t).*log(1-y));
 
 		diff = norm(w-w0);
 	end
