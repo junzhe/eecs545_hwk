@@ -5,35 +5,35 @@ function [w] = newtonLog(x, t, f, thresh)
 
 	R = zeros(N, N);
 
-	w = zeros(M, 1);
+	w0 = zeros(M, 1);
+	w = w0;
 
 	y = zeros(N, 1);
 
 	diff = Inf;
 
-	X = x';
+	X = f(x');
 	
 	J_p = 0;
 	J = J_p;
 
 	while diff > thresh
-		J_p = J;
+		w0 = w;
+
 		y = X * w;
 		y = sig(y);
 
-		grad = X' * (y-t);
-		H = X' * diag(y) * diag(1-y) * X;
+%		grad = X' * (y-t);
+%		H = X' * diag(y) * diag(1-y) * X;
 		
-		w = w - H\grad;
+%		w = w - H\grad;
 
-		%R = diag(y) * diag(1-y);
+		R = diag(y) * diag(1-y);
 	
-		%z = X * w - pinv(R) * (y - t);
-		%w = pinv(X'*R*X)*X'*R*z;
+		z = X * w - pinv(R) * (y - t);
+		w = pinv(X'*R*X + 10.*eye(M))*X'*R*z;
 
-		J = sum(-t.*log(y) - (1-t).*log(1-y));	
-	
-		diff = J - J_p;
+		diff = norm(w-w0);
 	end
 
 	J
