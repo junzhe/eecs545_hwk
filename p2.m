@@ -23,6 +23,8 @@ X_test = basis_func(x_test);
 
 prob = sig(w' * X_test)';
 
+mis_list = [];
+
 correct = 0;
 for i=1:length(prob)
 	predict = y(:, 2000+i);
@@ -30,15 +32,19 @@ for i=1:length(prob)
 		correct++;
 	elseif prob(i) <= 0.5 && predict== 0
 		correct++;
-	elseif prob(i) > 0.7 && predict == 0
-		showDigit(x, y, 2000+i);
-		prob(i)
-		pause;
-	elseif prob(i) <= 0.3 && predict == 1
-		showDigit(x, y, 2000+i);
-		prob(i)
-		pause;
+	elseif prob(i) > 0.5 && predict == 0
+		mis_list = [mis_list;[abs(1-2*prob(i)), i]];
+	elseif prob(i) <= 0.5 && predict == 1
+		mis_list = [mis_list;[abs(1-2*prob(i)), i]];
 	end 
+end
+
+mis_list_sorted = sortrows(mis_list,1);
+
+for i=length(mis_list_sorted):-1:length(mis_list_sorted)-19
+	mis_list_sorted(i,1)
+	showDigit(x, y, 2000+mis_list_sorted(i,2));
+	pause;
 end
 
 correct/1000 
