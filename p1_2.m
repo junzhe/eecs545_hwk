@@ -13,8 +13,8 @@ w
 
 plot([1:length(dist)], dist, '-');
 
-sdg_error = calcError(w, data.x, data.y, 3, basis_func)
+sdg_error = calcError(w, data.x_test, data.y_test, 3, basis_func)
 
-anal_error = calcError(w_correct, data.x, data.y, 3, basis_func)
+anal_error = calcError(w_correct, data.x_test, data.y_test, 3, basis_func)
 
 
